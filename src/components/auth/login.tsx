@@ -1,22 +1,57 @@
+import Link from 'next/link';
+import TextField from '@components/text-field/text-field';
+
 const LoginForm = () => {
     return (
-        <form className="bg-white">
-            <h1 className="text-gray-800 font-bold text-2xl mb-5">Login to Account</h1>
-            <div className="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
-                </svg>
-                <input className="pl-2 outline-none border-none" type="text" name="" id="" placeholder="Email Address" />
+        <div className="mx-auto md:h-screen flex flex-col justify-center items-center px-6 pt-8 pt:mt-0">
+            <a href="#" className="text-2xl font-semibold flex justify-center items-center mb-8 lg:mb-10">
+                {/* <img src="/images/logo.svg" className="h-10 mr-4" alt="Windster Logo"> */}
+                <span className="self-center text-2xl font-bold whitespace-nowrap">Windster</span> 
+            </a>
+
+            <div className="bg-white shadow rounded-lg md:mt-0 w-full sm:max-w-screen-sm xl:p-0">
+                <div className="p-6 sm:p-8 lg:p-16 space-y-8">
+                    <h2 className="text-2xl lg:text-3xl font-bold text-gray-900">
+                        Account Login
+                    </h2>
+                    <form className="mt-8 space-y-6" action="#">
+                        <div>
+                            <TextField 
+                                id="email" 
+                                name="email" 
+                                type="email" 
+                                label="Your Email" 
+                                placeholder="johndoe@company.com" 
+                                onChange={(event) => console.log(event.target.value)}
+                            />
+                        </div>
+                        <div>
+                            <TextField 
+                                type="password" 
+                                id="password" 
+                                name="password" 
+                                label="Your Password" 
+                                placeholder="********" 
+                                onChange={(event) => console.log(event.target.value)}
+                            />
+                        </div>
+                        <button type="submit" style={{backgroundColor: 'rgba(8,145,178,var(--tw-bg-opacity))'}} 
+                        className="text-white focus:ring-4 focus:ring-cyan-200 font-medium rounded-lg text-base 
+                        px-5 py-3 w-full sm:w-auto text-center inline-flex">
+                            Login to your account
+                            <svg className="mr-1 ml-2 h-5 w-5" fill="currentColor" viewBox="0 0 20 20" 
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" 
+                                clipRule="evenodd"></path>
+                            </svg>
+                        </button>
+                        <div className="text-sm font-medium text-gray-500">
+                            Not registered? <Link href="/auth/signup"><a className="text-teal-500 hover:underline">Create account</a></Link>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div className="flex items-center border-2 py-2 px-3 rounded-2xl">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
-                </svg>
-                <input className="pl-2 outline-none border-none" type="text" name="" id="" placeholder="Password" />
-            </div>
-            <button type="submit" className="block w-full bg-indigo-600 mt-4 py-2 rounded-2xl text-white font-semibold mb-2">Login</button>
-            <span className="text-sm ml-2 hover:text-blue-500 cursor-pointer">Dont have an account? Signup</span>
-        </form>
+        </div>
     )
 }
 
