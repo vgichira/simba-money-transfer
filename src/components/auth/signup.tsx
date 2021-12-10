@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import TextField from '@components/text-field/text-field';
+import TextField from '@components/forms/text-field/text-field';
 
 const SignupForm = () => {
     return (
