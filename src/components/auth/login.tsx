@@ -14,9 +14,17 @@ const initialValues = {
 }
 
 const LoginForm: React.FC = () => {
-    const loginUser = () => {
-        return
-    }
+    const loginUser = async (
+        values, 
+        { 
+            resetForm, 
+            setStatus, 
+            setSubmitting 
+        }) => {
+		    resetForm();
+		    setStatus({ sent: true });
+		    setSubmitting(false);
+  	};
 
     return (
         <div className="mx-auto md:h-screen flex flex-col justify-center items-center px-6 pt-8 pt:mt-0">
@@ -36,19 +44,21 @@ const LoginForm: React.FC = () => {
                         validationSchema={validationSchema}
                     >
                     {({
-                        errors,
-						handleBlur,
-						handleChange,
-						handleSubmit,
-						isSubmitting,
-						touched,
-						values,
+                        errors, 
+						handleBlur, 
+						handleChange, 
+						handleSubmit, 
+						isSubmitting, 
+						touched, 
+						values, 
                     }) => (
                         <form 
                             className="mt-8 space-y-6" 
                             onSubmit={handleSubmit}
                         >
                             <div>
+                            {errors && errors.submit && (<p className="mt-2 text-sm text-red-500 
+                            dark:text-gray-400">{errors.submit}</p>)}
                                 <TextField 
                                     id="email" 
                                     name="email" 

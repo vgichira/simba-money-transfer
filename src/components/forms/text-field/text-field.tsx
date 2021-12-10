@@ -15,7 +15,8 @@ const TextField: React.FC<Props>= ({ label, id, error, ...props }) => {
         className={`bg-gray-50 border ${error ? 'border-red-500' : 'border-gray-300' }  
         text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 
         focus:border-cyan-600 block w-full p-2.5`} {...props} />
-        <p className="mt-2 text-sm text-red-500 dark:text-gray-400">{error}</p>
+        {error && <p className="mt-2 text-sm text-red-500 
+        dark:text-gray-400">{error}</p>}
     </>
     );
 }
