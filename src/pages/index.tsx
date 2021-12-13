@@ -1,8 +1,12 @@
-import { NextPage } from 'next'
-import SEO from '@components/seo/seo';
+import Layout from '@layouts/app-layout';
+import DashboardData from '@features/dashboard/dashboard';
 
-const Home: NextPage = () => {
-  return <SEO title="Simba Transfer :: Send and Receive Money"/>
+const Dashboard = () => {
+    return (
+        <Layout title="Dashboard">
+            <DashboardData />
+        </Layout>
+    )
 }
 
-export default Home
+export default Dashboard;
