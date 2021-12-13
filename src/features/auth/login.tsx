@@ -1,7 +1,11 @@
 import LoginForm from '@components/auth/login';
 
-const Login = () => {
-    return <LoginForm />;
+type LoginProps = {
+    csrfToken: string
+}
+
+const Login: React.FC<LoginProps> = ({ csrfToken }) => {
+    return <LoginForm csrfToken={csrfToken} />;
 }
 
 export default Login;
