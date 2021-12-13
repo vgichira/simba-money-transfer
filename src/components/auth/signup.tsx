@@ -32,8 +32,10 @@ const SignupForm = () => {
     });
 
     return (
-        <div className="mx-auto md:h-screen flex flex-col justify-center items-center px-6 pt-8 pt:mt-0">
-            <a href="#" className="text-2xl font-semibold flex justify-center items-center mb-8 lg:mb-10">
+        <div className="mx-auto md:h-screen flex flex-col 
+        justify-center items-center px-6 pt-8 pt:mt-0">
+            <a href="#" className="text-2xl font-semibold flex 
+            justify-center items-center mb-8 lg:mb-10">
                 {/* <img src="/images/logo.svg" className="h-10 mr-4" alt="Windster Logo"> */}
                 <span className="self-center text-2xl font-bold whitespace-nowrap">Windster</span> 
             </a>

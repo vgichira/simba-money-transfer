@@ -1,6 +1,8 @@
+import Router from 'next/router';
 import Link from 'next/link';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import { signIn } from 'next-auth/react';
 import TextField from '@components/forms/text-field/text-field';
 
 const validationSchema = Yup.object().shape({
@@ -13,21 +15,42 @@ const initialValues = {
     password: '',
 }
 
-const LoginForm: React.FC = () => {
+type LoginProps = {
+    csrfToken: string
+}
+
+const LoginForm: React.FC<LoginProps> = ({ csrfToken }) => {
     const loginUser = async (
         values, 
         { 
-            resetForm, 
-            setStatus, 
-            setSubmitting 
+            // resetForm, 
+            // setStatus, 
+            setSubmitting, 
+            setErrors
         }) => {
-		    resetForm();
-		    setStatus({ sent: true });
-		    setSubmitting(false);
-  	};
+            const { email, password } = values;
+
+            setSubmitting(true);
+
+            const response = await signIn("credentials", {
+                email, password, callbackUrl: `${window.location.origin}/dashboard`, redirect: false }
+            );
+
+            if(response.error) {
+                setErrors({submit: response.error.split(": ")[1]});
+                return;
+            }
+
+            Router.push(response.url);
+
+            // resetForm();
+            // setStatus({ sent: true });
+            // setSubmitting(false);
+    };
 
     return (
-        <div className="mx-auto md:h-screen flex flex-col justify-center items-center px-6 pt-8 pt:mt-0">
+        <div className="mx-auto md:h-screen flex flex-col 
+        justify-center items-center px-6 pt-8 pt:mt-0">
             <a href="#" className="text-2xl font-semibold flex justify-center items-center mb-8 lg:mb-10">
                 {/* <img src="/images/logo.svg" className="h-10 mr-4" alt="Windster Logo"> */}
                 <span className="self-center text-2xl font-bold whitespace-nowrap">Windster</span> 
@@ -60,6 +83,13 @@ const LoginForm: React.FC = () => {
                             {errors && errors.submit && (<p className="mt-2 text-sm text-red-500 
                             dark:text-gray-400">{errors.submit}</p>)}
                                 <TextField 
+                                    id="csrfToken" 
+                                    name="csrf_token" 
+                                    type="hidden" 
+                                    onChange={handleChange} 
+                                    defaultValue={csrfToken} 
+                                />
+                                <TextField 
                                     id="email" 
                                     name="email" 
                                     type="email" 
@@ -68,7 +98,7 @@ const LoginForm: React.FC = () => {
                                     placeholder="johndoe@company.com" 
                                     onBlur={handleBlur}
                                     onChange={handleChange} 
-                                    value={values.email} 
+                                    value={values.email || 'vgichira@gmail.com'} 
                                 />
                             </div>
                             <div>
@@ -81,7 +111,7 @@ const LoginForm: React.FC = () => {
                                     error={touched.password && errors.password}
                                     onBlur={handleBlur}
                                     onChange={handleChange} 
-                                    value={values.password}
+                                    value={values.password || 'Test123'}
                                 />
                             </div>
                             <button type="submit" style={{backgroundColor: 'rgba(8,145,178,var(--tw-bg-opacity))'}} 

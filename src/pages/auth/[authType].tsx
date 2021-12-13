@@ -1,10 +1,15 @@
-import { NextPage } from 'next';
 import { useRouter } from 'next/router';
+import { getCsrfToken } from 'next-auth/react';
+import { GetServerSideProps } from 'next';
 import Login from '@features/auth/login';
 import SignUp from '@features/auth/signup';
 import AuthLayout from '@layouts/auth/authLayout';
 
-const AuthPage: NextPage = (props) => {
+type AuthPageProps = {
+    csrfToken: string
+}
+
+const AuthPage:React.FC<AuthPageProps> = (props) => {
     const router = useRouter();
 
     let component = null;
@@ -16,10 +21,18 @@ const AuthPage: NextPage = (props) => {
             component = <SignUp />;
             break;
         default:
-            component = <Login />;
+            component = <Login csrfToken={props.csrfToken} />;
     }
 
     return <AuthLayout title="Account Login" component={component} {...props} />
+}
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    return {
+        props: {
+            csrfToken: await getCsrfToken(context),
+        }
+    }
 }
 
 export default AuthPage;
