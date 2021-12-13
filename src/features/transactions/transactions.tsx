@@ -3,7 +3,7 @@ const Transactions = () => {
         return (
             [1, 2, 3, 4, 5, 6, 7, 8].map((current) => (
                 <tr className="hover:bg-gray-100" key={current}>
-                    <td className="p-4 whitespace-nowrap text-base font-medium text-gray-900">#37483</td>
+                    <td className="p-4 whitespace-nowrap text-base font-medium text-gray-900">#{current}</td>
                     <td className="p-4 flex items-center whitespace-nowrap space-x-6 mr-12 lg:mr-0">
                         <div className="text-sm font-normal text-gray-500">
                             <div className="text-base font-semibold text-gray-900">Vincent Muchiri</div>
