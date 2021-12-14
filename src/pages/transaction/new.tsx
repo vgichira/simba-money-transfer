@@ -48,7 +48,10 @@ const NewTransaction = () => {
                                     placeholder="2000" aria-label="Email" />
                                 </div>
                                 <div className="mt-4">
-                                    <button className="px-4 py-1 text-white font-light tracking-wider bg-gray-900 rounded" type="submit">$3.00</button>
+                                    <button 
+                                    style={{backgroundColor: 'rgba(8,145,178,var(--tw-bg-opacity))'}} 
+                                    className="px-4 py-1 text-white font-light tracking-wider px-10 
+                                    py-3.5 rounded-lg" type="submit">Send KES 30,000</button>
                                 </div>
                             </form>
                         </div>
