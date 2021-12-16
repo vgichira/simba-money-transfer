@@ -29,11 +29,19 @@ const NewTransactionForm = () => {
     const handleSubmit = async (
         values, { 
             // resetForm, 
-            // setErrors, 
+            setErrors, 
             // setStatus, 
             // setSubmitting 
         }) => {
             const receiver = await getUser({email: values.email});
+
+            // check if the receiver is the same as the sender
+            if (values.email === receiver.email) {
+                setErrors({
+                    submit: 'You cannot send money to yourself'
+                })
+                return
+            }
 
             const exchangeRate = await getExchangeRate("USD", "KES");
 
@@ -75,6 +83,10 @@ const NewTransactionForm = () => {
                 const amountError = touched.amount && errors.amount;
                 return (
                     <form onSubmit={handleSubmit} className="m-4 pt-1 pr-20 bg-white rounded">
+                        {errors && errors.submit && (
+						<p className="mt-2 text-sm text-red-500 
+                        dark:text-gray-400">{errors.submit}</p>
+					    )}
                         <div className="mt-2">
                             <label className="block text-sm text-gray-600" htmlFor="cus_email">Recipient Email</label>
                             <input className="w-full px-5 border-[#0891b2] py-4 text-gray-700 
