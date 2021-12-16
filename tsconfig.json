@@ -55,6 +55,9 @@
       ],
       "@data/*": [
         "data/*"
+      ], 
+      "@middleware/*": [
+        "middleware/*"
       ]
     },
     "incremental": true

@@ -11,14 +11,17 @@ datasource db {
 }
 
 model User {
-  id           Int           @id @default(autoincrement())
-  name         String        @db.VarChar(255)
-  email        String        @unique @db.VarChar(255)
-  verifiedAt   DateTime?     @map(name: "verified_at") @db.Timestamp
-  isActive     Boolean       @default(false) @map(name: "is_active")
-  password     String        @db.VarChar(255)
-  createdAt    DateTime      @default(now()) @map(name: "created_at") @db.Timestamp
-  updatedAt    DateTime      @default(now()) @map(name: "updated_at") @db.Timestamp
+  id              Int       @id @default(autoincrement())
+  name            String    @db.VarChar(255)
+  email           String    @unique @db.VarChar(255)
+  accountCurrency Int?      @map("currency_id")
+  verifiedAt      DateTime? @map(name: "verified_at") @db.Timestamp
+  isActive        Boolean   @default(false) @map(name: "is_active")
+  password        String    @db.VarChar(255)
+  createdAt       DateTime  @default(now()) @map(name: "created_at") @db.Timestamp
+  updatedAt       DateTime  @default(now()) @map(name: "updated_at") @db.Timestamp
+
+  currency     Currency?     @relation(fields: [accountCurrency], references: [id])
   transactions Transaction[] @relation("sender")
   transaction  Transaction[] @relation("receiver")
 
@@ -26,14 +29,15 @@ model User {
 }
 
 model Currency {
-  id        Int      @id @default(autoincrement())
-  currencyName String @db.VarChar(50) @map("currency_name")
-  shortHand String   @map("short_hand") @db.VarChar(10)
-  isActive  Boolean  @default(true) @map("is_active")
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp
-  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamp
-  deletedAt DateTime? @map("deleted_at") @db.Timestamp
+  id           Int       @id @default(autoincrement())
+  currencyName String    @map("currency_name") @db.VarChar(50)
+  shortHand    String    @map("short_hand") @db.VarChar(10)
+  isActive     Boolean   @default(true) @map("is_active")
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamp
+  updatedAt    DateTime  @default(now()) @map("updated_at") @db.Timestamp
+  deletedAt    DateTime? @map("deleted_at") @db.Timestamp
 
+  user         User[]
   transaction  Transaction[] @relation("senderCurrency")
   transactions Transaction[] @relation("receiverCurrency")
   @@map("currencies")

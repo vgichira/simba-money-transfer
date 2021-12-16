@@ -33,7 +33,7 @@ const LoginForm: React.FC<LoginProps> = ({ csrfToken }) => {
             setSubmitting(true);
 
             const response = await signIn("credentials", {
-                email, password, callbackUrl: `${window.location.origin}/dashboard`, redirect: false }
+                email, password, callbackUrl: `${window.location.origin}`, redirect: false }
             );
 
             if(response.error) {

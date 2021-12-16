@@ -1,5 +1,6 @@
 import Layout from '@layouts/app-layout';
 import NewTransactionForm from '@features/transactions/new-transaction-form';
+import withAuth from '@middleware/auth';
 
 const NewTransaction = () => {
     return (
@@ -15,4 +16,4 @@ const NewTransaction = () => {
     )
 }
 
-export default NewTransaction;
+export default withAuth(NewTransaction);

@@ -30,7 +30,14 @@ const options = {
 						throw new Error("Incorrect credentials");
 					}
 
-					userAccount = user; 
+					userAccount = {
+						id: user.id,
+						name: user.name,
+						email: user.email,
+						isActive: user.isActive,
+						accountCurrency: user.accountCurrency,
+
+					}; 
 
 					return user;
 				} catch (err) {

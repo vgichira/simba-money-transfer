@@ -2,6 +2,10 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import PageHeader from '@layouts/header/page-header';
 import CurrencySelect from '@components/currency/currency-select';
+import { useSession } from 'next-auth/react';
+import { getUser } from '@data/use-user';
+import { getExchangeRate } from '@data/use-currency';
+import useTransaction from '@data/use-transaction';
 
 const initialValues = {
     email: '',
@@ -16,9 +20,38 @@ const validationSchema = Yup.object().shape({
 });
 
 const NewTransactionForm = () => {
-    const handleSubmit = () => {
-        return;
-    }
+    let user: any = null;
+    const { data: session } = useSession();
+    const { newTransaction } = useTransaction();
+
+    user = session.user;
+
+    const handleSubmit = async (
+        values, { 
+            // resetForm, 
+            // setErrors, 
+            // setStatus, 
+            // setSubmitting 
+        }) => {
+            const receiver = await getUser({email: values.email});
+
+            const exchangeRate = await getExchangeRate("USD", "KES");
+
+            const transaction = {
+                trans_id: `TRAN${+new Date()}`,
+                sender_currency: Number(user.accountCurrency), 
+                receiver_currency: Number(values.currency), 
+                exchange_rate: Number(exchangeRate), 
+                amount: Number(values.amount), 
+                is_successful: true,
+                sender_id: Number(user.id), 
+                receiver_id: Number(receiver.id), 
+            }
+
+            const response = await newTransaction(transaction)
+
+            console.log(response)
+        }
     return (
     <>
         <PageHeader title="New Transaction" />
@@ -88,7 +121,7 @@ const NewTransactionForm = () => {
                             <button 
                             style={{backgroundColor: 'rgba(8,145,178,var(--tw-bg-opacity))'}} 
                             className="px-4 py-1 text-white font-light tracking-wider px-10
-                            py-3.5 rounded-lg" disabled={isSubmitting} type="submit">
+                            py-3.5 rounded-lg" type="submit">
                             {isSubmitting ? "Loading..." : "Send to Vincent Muchiri"}
                             </button>
                         </div>
