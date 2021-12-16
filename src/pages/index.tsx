@@ -1,5 +1,6 @@
 import Layout from '@layouts/app-layout';
 import DashboardData from '@features/dashboard/dashboard';
+import withAuth from '@middleware/auth';
 
 const Dashboard = () => {
     return (
@@ -9,4 +10,4 @@ const Dashboard = () => {
     )
 }
 
-export default Dashboard;
+export default withAuth(Dashboard);
