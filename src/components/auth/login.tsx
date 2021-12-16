@@ -98,7 +98,7 @@ const LoginForm: React.FC<LoginProps> = ({ csrfToken }) => {
                                     placeholder="johndoe@company.com" 
                                     onBlur={handleBlur}
                                     onChange={handleChange} 
-                                    value={values.email || 'vgichira@gmail.com'} 
+                                    value={values.email} 
                                 />
                             </div>
                             <div>
@@ -111,7 +111,7 @@ const LoginForm: React.FC<LoginProps> = ({ csrfToken }) => {
                                     error={touched.password && errors.password}
                                     onBlur={handleBlur}
                                     onChange={handleChange} 
-                                    value={values.password || 'Test123'}
+                                    value={values.password}
                                 />
                             </div>
                             <button type="submit" style={{backgroundColor: 'rgba(8,145,178,var(--tw-bg-opacity))'}} 
