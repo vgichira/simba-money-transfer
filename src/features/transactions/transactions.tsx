@@ -1,31 +1,16 @@
 import Link from 'next/link';
 import PageHeader from '@layouts/header/page-header';
+import { formatDate } from '@utils/formatter';
+import { useSession } from 'next-auth/react';
 
-const Transactions = () => {
-    const renderTransactions = () => {
-        return (
-            [1, 2, 3, 4, 5, 6, 7, 8].map((current) => (
-                <tr className="hover:bg-gray-100" key={current}>
-                    <td className="p-4 whitespace-nowrap text-base font-medium text-gray-900">#{current}</td>
-                    <td className="p-4 flex items-center whitespace-nowrap space-x-6 mr-12 lg:mr-0">
-                        <div className="text-sm font-normal text-gray-500">
-                            <div className="text-base font-semibold text-gray-900">Vincent Muchiri</div>
-                            <div className="text-sm font-normal text-gray-500">test@test.com</div>
-                        </div>
-                    </td>
-                    <td className="p-4 items-center whitespace-nowrap space-x-6 mr-12 lg:mr-0">
-                        <div className="text-sm font-normal text-gray-500">
-                            <div className="text-base font-semibold text-gray-900">Vincent Muchiri</div>
-                            <div className="text-sm font-normal text-gray-500">test@test.com</div>
-                        </div>
-                    </td>
-                    <td className="p-4 whitespace-nowrap text-base font-medium text-gray-900">USD</td>
-                    <td className="p-4 whitespace-nowrap text-base font-medium text-gray-900">April 16, 2019 17:37</td>
-                    <td className="p-4 whitespace-nowrap text-base font-medium text-gray-900">April 16, 2019 17:37</td>
-                </tr>
-            ))
-        )
-    }
+type Props = {
+    transactions: any
+}
+
+const Transactions:React.FC<Props> = ({ transactions }) => {
+    const { data: session } = useSession();
+
+    const { user } = session
 
     return (
         <>
@@ -82,6 +67,9 @@ const Transactions = () => {
                                             Currency
                                         </th>
                                         <th scope="col" className="p-4 text-left text-xs font-medium text-gray-500 uppercase">
+                                            Amount
+                                        </th>
+                                        <th scope="col" className="p-4 text-left text-xs font-medium text-gray-500 uppercase">
                                             Created At
                                         </th>
                                         <th scope="col" className="p-4 text-left text-xs font-medium text-gray-500 uppercase">
@@ -90,7 +78,43 @@ const Transactions = () => {
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
-                                    {renderTransactions()}
+                                    {transactions.map(({ id, transactionID, amount, sender, receiver, receiverCurrency, createdAt, updatedAt }) => (
+                                        <tr className="hover:bg-gray-100" key={id}>
+                                            <td className="p-4 whitespace-nowrap text-base font-medium text-gray-900">{transactionID}</td>
+                                            <td className="p-4 flex items-center whitespace-nowrap space-x-6 mr-12 lg:mr-0">
+                                                <div className="text-sm font-normal text-gray-500">
+                                                    {user.email === sender.email ? (
+                                                        <div className="text-base font-semibold text-gray-900">You</div>
+                                                    )  : (
+                                                        <>
+                                                            <div className="text-base font-semibold text-gray-900">{sender.name}</div>
+                                                    
+                                                            <div className="text-sm font-normal text-gray-500">{sender.email}</div>
+                                                        </>
+                                                    )
+                                                    }
+                                                </div>
+                                            </td>
+                                            <td className="p-4 items-center whitespace-nowrap space-x-6 mr-12 lg:mr-0">
+                                                <div className="text-sm font-normal text-gray-500">
+                                                {user.email === sender.email ? (
+                                                        <div className="text-base font-semibold text-gray-900">You</div>
+                                                    )  : (
+                                                        <>
+                                                            <div className="text-base font-semibold text-gray-900">{receiver.name}</div>
+                                                    
+                                                            <div className="text-sm font-normal text-gray-500">{receiver.email}</div>
+                                                        </>
+                                                    )
+                                                }
+                                                </div>
+                                            </td>
+                                            <td className="p-4 whitespace-nowrap text-base font-medium text-gray-900">{receiverCurrency.shortHand}</td>
+                                            <td className="p-4 whitespace-nowrap text-base font-medium text-gray-900">{amount.toLocaleString()}</td>
+                                            <td className="p-4 whitespace-nowrap text-base font-medium text-gray-900">{formatDate(createdAt, "MMM DD, YYYY hh:mm")}</td>
+                                            <td className="p-4 whitespace-nowrap text-base font-medium text-gray-900">{formatDate(updatedAt, "MMM DD, YYYY hh:mm")}</td>
+                                        </tr>
+                                    ))}
                                 </tbody>
                             </table>
                         </div>
