@@ -1,36 +1,32 @@
-import prisma from '@lib/prisma';
 import axios from 'axios';
+import useSWR from 'swr';
+import fetcher from '@utils/api/fetcher';
 
-const useTransaction = () => {
-    const newTransaction = async (transaction) => {
-        const response = await axios.post(`/api/transactions/new`, transaction);
+interface transType {
+    trans_id: string;
+    sender_currency: number;
+    receiver_currency: number;
+    exchange_rate: number;
+    amount: number;
+    is_successful: boolean;
+    sender_id: number;
+    receiver_id: number;
+}
 
-        return response.data;
-    }
+export const newTransaction = async (transaction: transType) => {
+    const response = await axios.post(`/api/transactions/new`, transaction);
+
+    return response.data;
+}
+
+export const useTransactions = () => {
+    const { data, error } = useSWR(`/api/transactions`, fetcher);
+
+    const loading = !data && !error;
 
     return {
-        newTransaction
+        loading, 
+        data, 
+        error
     }
 }
-
-export const getTransactions = async () => {
-    const transactions = await prisma.transaction.findMany({
-        where: {
-            isSuccessful: true,
-        },
-        select: {
-            id: true,
-            transactionID: true,
-            amount: true,
-            sender: true, 
-            receiver: true,
-            receiverCurrency: true, 
-            createdAt: true,
-            updatedAt: true
-        }
-    });
-
-    return transactions;
-}
-
-export default useTransaction;

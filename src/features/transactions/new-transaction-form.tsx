@@ -5,7 +5,7 @@ import CurrencySelect from '@components/currency/currency-select';
 import { useSession } from 'next-auth/react';
 import { getUser } from '@data/use-user';
 import { getExchangeRate } from '@data/use-currency';
-import useTransaction from '@data/use-transaction';
+import { newTransaction } from '@data/use-transaction';
 
 const initialValues = {
     email: '',
@@ -22,7 +22,6 @@ const validationSchema = Yup.object().shape({
 const NewTransactionForm = () => {
     let user: any = null;
     const { data: session } = useSession();
-    const { newTransaction } = useTransaction();
 
     user = session.user;
 
@@ -58,7 +57,7 @@ const NewTransactionForm = () => {
 
             const response = await newTransaction(transaction)
 
-            console.log(response)
+            // console.log(response)
         }
     return (
     <>
