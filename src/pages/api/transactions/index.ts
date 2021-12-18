@@ -4,10 +4,20 @@ const fetchTransactions = async (req, res) => {
     const transactions = await prisma.transaction.findMany({
         where: {
             isSuccessful: true
+        },
+        select: {
+            id: true,
+            transactionID: true,
+            amount: true,
+            sender: true, 
+            receiver: true,
+            receiverCurrency: true, 
+            createdAt: true,
+            updatedAt: true
         }
     })
 
-    res.json(transactions)
+    res.status(200).json(transactions)
 }
 
 export default fetchTransactions;

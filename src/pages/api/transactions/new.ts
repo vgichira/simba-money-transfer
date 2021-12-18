@@ -8,7 +8,7 @@ const newTransaction = async (req, res) => {
         return
     }
 
-    const { 
+    const {
         trans_id, 
         sender_currency, 
         receiver_currency, 
@@ -32,7 +32,7 @@ const newTransaction = async (req, res) => {
         }
     })
 
-    res.json(transaction)
+    res.status(200).json(transaction)
 }
 
 export default newTransaction;
