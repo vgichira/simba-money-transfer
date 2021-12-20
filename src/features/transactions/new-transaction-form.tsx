@@ -1,20 +1,24 @@
+import Router from 'next/router';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import { ToastContainer, toast } from 'react-toastify';
+  import 'react-toastify/dist/ReactToastify.css';
 import PageHeader from '@layouts/header/page-header';
 import CurrencySelect from '@components/currency/currency-select';
+import RecipientSelect from '@components/transaction/recipient-select';
 import { useSession } from 'next-auth/react';
-import { getUser } from '@data/use-user';
 import { getExchangeRate } from '@data/use-currency';
 import { newTransaction } from '@data/use-transaction';
+import useCurrency from '@data/use-currency';
 
 const initialValues = {
-    email: '',
+    user: '',
     currency: '',
     amount: ''
 }
 
 const validationSchema = Yup.object().shape({
-    email: Yup.string().required('Email is required'),
+    user: Yup.string().required('User is required'),
     currency: Yup.string().required('Currency is required'),
     amount: Yup.string().required('Amount is required')
 });
@@ -22,27 +26,28 @@ const validationSchema = Yup.object().shape({
 const NewTransactionForm = () => {
     let user: any = null;
     const { data: session } = useSession();
+    const { loading, error, data: currencies } = useCurrency();
+
+    if (loading) return null;
+
+    if (error) {
+        console.log(error);
+        return null;
+    }
 
     user = session.user;
 
     const handleSubmit = async (
         values, { 
             // resetForm, 
-            setErrors, 
+            // setErrors, 
             // setStatus, 
             // setSubmitting 
         }) => {
-            const receiver = await getUser({email: values.email});
+            const currencyTo = currencies.find(currency => currency.id === Number(values.currency));
+            const currencyFrom = currencies.find(currency => currency.id === Number(user.accountCurrency))
 
-            // check if the receiver is the same as the sender
-            if (values.email === receiver.email) {
-                setErrors({
-                    submit: 'You cannot send money to yourself'
-                })
-                return
-            }
-
-            const exchangeRate = await getExchangeRate("USD", "KES");
+            const exchangeRate = await getExchangeRate(currencyFrom.shortHand, currencyTo.shortHand);
 
             const transaction = {
                 trans_id: `TRAN${+new Date()}`,
@@ -52,12 +57,21 @@ const NewTransactionForm = () => {
                 amount: Number(values.amount), 
                 is_successful: true,
                 sender_id: Number(user.id), 
-                receiver_id: Number(receiver.id), 
+                receiver_id: Number(values.user), 
             }
 
-            const response = await newTransaction(transaction)
+            const response = await newTransaction(transaction);
 
-            // console.log(response)
+            if (response) {
+                const notify = () => toast("Bingo! Transaction successful.", {
+                    type: 'success'
+                });
+
+                notify();
+                
+                Router.push('/transactions')
+            }
+
         }
     return (
     <>
@@ -77,7 +91,7 @@ const NewTransactionForm = () => {
                 touched, 
                 values, 
             }) => {
-                const emailError = touched.email && errors.email;
+                const userError = touched.user && errors.user;
                 const currencyError = touched.currency && errors.currency;
                 const amountError = touched.amount && errors.amount;
                 return (
@@ -87,19 +101,15 @@ const NewTransactionForm = () => {
                         dark:text-gray-400">{errors.submit}</p>
 					    )}
                         <div className="mt-2">
-                            <label className="block text-sm text-gray-600" htmlFor="cus_email">Recipient Email</label>
-                            <input className="w-full px-5 border-[#0891b2] py-4 text-gray-700 
-                            bg-gray-200 focus:ring-cyan-200 rounded" 
-                            id="email" 
-                            name="email" 
-                            type="email" 
-                            placeholder="johndoe@company.com" 
-                            onBlur={handleBlur}
-                            onChange={handleChange} 
-                            value={values.email} 
+                            <RecipientSelect 
+                                id="user"
+                                name="user"
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                value={values.email}
                             />
-                            {emailError && <p className="mt-2 text-sm text-red-500 
-                            dark:text-gray-400">{emailError}</p>}
+                            {userError && <p className="mt-2 text-sm text-red-500 
+                            dark:text-gray-400">{userError}</p>}
                         </div>
                         <div className="flex">
                             <div className="pt-7 w-1/5 md:w-1/3 pr-1">
@@ -141,6 +151,8 @@ const NewTransactionForm = () => {
             }}
             </Formik>
         </div>
+
+        <ToastContainer />
     </>
     )
 }
