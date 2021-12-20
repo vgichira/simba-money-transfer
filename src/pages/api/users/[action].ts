@@ -6,6 +6,8 @@ const userActions = async (req, res) => {
     const { data } = req.body;
     let response: any
 
+    const { user } = await getSession({ req });
+
     switch (action) {
         case "fetch":
             response = await prisma.user.findUnique({
@@ -19,8 +21,6 @@ const userActions = async (req, res) => {
             })
             break;
         case "all":
-            const { user } = await getSession({ req });
-
             response = await prisma.user.findMany({
                 where: {
                     isActive: true, 
@@ -35,12 +35,45 @@ const userActions = async (req, res) => {
                 }
             })
             break;
+        case "balance":
+            const debitTransactions = await prisma.transaction.findMany({
+                where: {
+                    senderID: user.id,
+                }, 
+                select: {
+                    exchangeRate: true, 
+                    amount: true
+                }
+            })
+
+            const debitTransactionsTotal = debitTransactions.reduce((acc, transaction) => {
+                return acc + (transaction.exchangeRate * transaction.amount);
+            }, 0);
+
+            const creditTransactions = await prisma.transaction.findMany({
+                where: {
+                    receiverID: user.id,
+                }, 
+                select: {
+                    exchangeRate: true, 
+                    amount: true
+                }
+            })
+
+            const creditTransactionsTotal = creditTransactions.reduce((acc, transaction) => {
+                return acc + (transaction.exchangeRate * transaction.amount);
+            }, 0);
+
+            response = {
+                account_balance: creditTransactionsTotal - debitTransactionsTotal
+            }
+            break;
         default:
             response = null;
             break;
     }
 
-    res.json(response)
+    res.status(200).json(response)
 }
 
 export default userActions;
