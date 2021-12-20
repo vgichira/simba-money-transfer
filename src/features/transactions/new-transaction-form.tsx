@@ -2,7 +2,7 @@ import Router from 'next/router';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { ToastContainer, toast } from 'react-toastify';
-  import 'react-toastify/dist/ReactToastify.css';
+import 'react-toastify/dist/ReactToastify.css';
 import PageHeader from '@layouts/header/page-header';
 import CurrencySelect from '@components/currency/currency-select';
 import RecipientSelect from '@components/transaction/recipient-select';
