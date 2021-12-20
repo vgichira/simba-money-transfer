@@ -23,8 +23,8 @@ const LoginForm: React.FC<LoginProps> = ({ csrfToken }) => {
     const loginUser = async (
         values, 
         { 
-            // resetForm, 
-            // setStatus, 
+            resetForm, 
+            setStatus, 
             setSubmitting, 
             setErrors
         }) => {
@@ -33,7 +33,7 @@ const LoginForm: React.FC<LoginProps> = ({ csrfToken }) => {
             setSubmitting(true);
 
             const response = await signIn("credentials", {
-                email, password, callbackUrl: `${window.location.origin}`, redirect: false }
+                email, password, callbackUrl: `${window.location.origin}/transactions`, redirect: false }
             );
 
             if(response.error) {
@@ -43,9 +43,9 @@ const LoginForm: React.FC<LoginProps> = ({ csrfToken }) => {
 
             Router.push(response.url);
 
-            // resetForm();
-            // setStatus({ sent: true });
-            // setSubmitting(false);
+            resetForm();
+            setStatus({ sent: true });
+            setSubmitting(false);
     };
 
     return (

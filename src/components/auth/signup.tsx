@@ -1,35 +1,77 @@
 import Link from 'next/link';
+import Router from 'next/router';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import TextField from '@components/forms/text-field/text-field';
+import AccountCurrencySelect from '@components/auth/account-currency-select';
+import { signIn } from 'next-auth/react';
+import { registerUser } from '@data/use-user';
 
 const initialValues = {
     name : '',
     email : '',
+    currency: '',
     password : '',
-    confirm_pass: '',
     terms: false,
 }
 
 const SignupForm = () => {
-    const newUser = () => {
-        return
-    }
-
     const validationSchema = Yup.object().shape({
-        name: Yup.string().required('Name is required'),
+        name: Yup.string()
+            .required('Name is required'),
         email: Yup.string()
             .email('Must be a valid email')
             .max(255)
             .required('Email is required'),
+        currency: Yup.string()
+            .required("Account currency is required"),
         password: Yup.string()
             .required("Password is required")
             .min(4, "Password too short"),
-        confirm_pass: Yup.string()
-            .oneOf([Yup.ref('password'), null], "Passwords do not match")
-            .required("Password is required")
-            .min(4, "Password too short")
     });
+
+    const newUser = async ( 
+        values, 
+        { 
+            resetForm, 
+            setStatus, 
+            setSubmitting, 
+            setErrors
+        }) => {
+        try {
+            setSubmitting(true);
+
+            const { email, password } = values;
+
+            const response = await registerUser({
+                ...values, 
+                currency: Number(values.currency)
+            });
+
+            if(response.error) {
+                setErrors({submit: response.error});
+                return;
+            }
+
+            const loginUser = await signIn("credentials", {
+                email, password, callbackUrl: `${window.location.origin}/transactions`, redirect: false }
+            );
+
+            if(loginUser.error) {
+                setErrors({submit: loginUser.error.split(": ")[1]});
+                return;
+            }
+
+            Router.push(loginUser.url);
+
+            resetForm();
+            setStatus({ sent: true });
+            setSubmitting(false);
+        } catch (error) {
+            console.log(error);
+        }
+        return
+    }
 
     return (
         <div className="mx-auto md:h-screen flex flex-col 
@@ -64,6 +106,8 @@ const SignupForm = () => {
                         className="mt-8 space-y-3" 
                         onSubmit={handleSubmit}
                         >
+                            {errors && errors.submit && (<p className="mt-2 text-sm text-red-500 
+                            dark:text-gray-400">{errors.submit}</p>)}
                             <div>
                                 <TextField 
                                     id="name" 
@@ -91,6 +135,15 @@ const SignupForm = () => {
                                 />
                             </div>
                             <div>
+                                <AccountCurrencySelect
+                                    handleChange={handleChange}
+                                    handleBlur={handleBlur}
+                                    values={values}
+                                    touched={touched}
+                                    errors={errors}
+                                />
+                            </div>
+                            <div>
                                 <TextField 
                                     id="password" 
                                     name="password" 
@@ -101,19 +154,6 @@ const SignupForm = () => {
                                     onBlur={handleBlur} 
                                     onChange={handleChange}
                                     value={values.password}
-                                />
-                            </div>
-                            <div>
-                                <TextField 
-                                    id="confirm_pass" 
-                                    name="confirm_pass" 
-                                    type="password" 
-                                    label="Confirm Password" 
-                                    placeholder="********" 
-                                    error={touched.confirm_pass && errors.confirm_pass} 
-                                    onBlur={handleBlur} 
-                                    onChange={handleChange}
-                                    value={values.confirm_pass}
                                 />
                             </div>
                             <div className="flex items-start">

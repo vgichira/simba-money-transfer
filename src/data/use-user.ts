@@ -23,3 +23,13 @@ export const useUser = () => {
         error
     }
 }
+
+export const registerUser = async (data: any): Promise<any> => {
+    try {
+        const response = await axios.post('/api/auth/signup', data);
+
+        return response.data
+    } catch (error) {
+        return error.response.data;
+    }
+}

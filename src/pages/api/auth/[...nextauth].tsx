@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import prisma from '@lib/prisma';
+import { comparePassword } from '@utils/helpers';
 
 let userAccount = null;
 
@@ -18,15 +19,16 @@ const options = {
 			name: 'credentials',
 			credentials: null, 
 			async authorize(credentials: any) {
-				const { email } = credentials;
+				const { email, password } = credentials;
 				try {
-					const user = await prisma.user.findUnique({
+					const user = await prisma.user.findFirst({
 						where: {
 							email,
 						}
 					})
 
-					if (!user) {
+					// check if the password is correct
+					if (!user || !await comparePassword(password, user.password)) {
 						throw new Error("Incorrect credentials");
 					}
 
