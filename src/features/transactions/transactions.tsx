@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import PageHeader from '@layouts/header/page-header';
+import AccountBalance from '@components/transaction/account-balance';
 import { formatDate } from '@utils/formatter';
 import { useSession } from 'next-auth/react';
 
@@ -19,6 +20,7 @@ const Transactions:React.FC<Props> = ({ transactions }) => {
                     <div className="mb-4">
                         <PageHeader title="Transactions" />
                     </div>
+                    <AccountBalance/>
                     <div className="sm:flex">
                         <div className="hidden sm:flex items-center sm:divide-x sm:divide-gray-100 mb-3 sm:mb-0">
                             <form className="lg:pr-3" action="#" method="GET">
