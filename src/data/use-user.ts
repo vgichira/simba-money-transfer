@@ -33,3 +33,13 @@ export const registerUser = async (data: any): Promise<any> => {
         return error.response.data;
     }
 }
+
+export const getAccountBalance = async (): Promise<any> => {
+    try {
+        const response = await axios.get('/api/users/balance');
+
+        return response.data
+    } catch (error) {
+        return error.response.data;
+    }
+}

@@ -64,7 +64,13 @@ const Transactions:React.FC<Props> = ({ transactions }) => {
                                             To
                                         </th>
                                         <th scope="col" className="p-4 text-left text-xs font-medium text-gray-500 uppercase">
-                                            Currency
+                                            Sender Currency
+                                        </th>
+                                        <th scope="col" className="p-4 text-left text-xs font-medium text-gray-500 uppercase">
+                                            Receiver Currency
+                                        </th>
+                                        <th scope="col" className="p-4 text-left text-xs font-medium text-gray-500 uppercase">
+                                            Exchange Rate
                                         </th>
                                         <th scope="col" className="p-4 text-left text-xs font-medium text-gray-500 uppercase">
                                             Amount
@@ -72,27 +78,37 @@ const Transactions:React.FC<Props> = ({ transactions }) => {
                                         <th scope="col" className="p-4 text-left text-xs font-medium text-gray-500 uppercase">
                                             Created At
                                         </th>
-                                        <th scope="col" className="p-4 text-left text-xs font-medium text-gray-500 uppercase">
-                                            Updated At
-                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
-                                    {transactions.map(({ id, transactionID, amount, sender, receiver, receiverCurrency, createdAt, updatedAt }) => (
+                                    {transactions.map(({ 
+                                        id, 
+                                        transactionID, 
+                                        exchangeRate, 
+                                        amount, 
+                                        sender, 
+                                        receiver, 
+                                        senderCurrency, 
+                                        receiverCurrency, 
+                                        createdAt 
+                                    }) => (
                                         <tr className="hover:bg-gray-100" key={id}>
                                             <td className="p-4 whitespace-nowrap text-base font-medium text-gray-900">{transactionID}</td>
                                             <td className="p-4 flex items-center whitespace-nowrap space-x-6 mr-12 lg:mr-0">
                                                 <div className="text-sm font-normal text-gray-500">
-                                                    {user.email === sender.email ? (
-                                                        <div className="text-base font-semibold text-gray-900">You</div>
-                                                    )  : (
-                                                        <>
-                                                            <div className="text-base font-semibold text-gray-900">{sender.name}</div>
-                                                    
-                                                            <div className="text-sm font-normal text-gray-500">{sender.email}</div>
-                                                        </>
-                                                    )
-                                                    }
+                                                    {sender.email === receiver.email ? (
+                                                        <div className="text-base font-semibold text-gray-900">System</div>
+                                                    ) : (
+                                                        user.email === sender.email ? (
+                                                            <div className="text-base font-semibold text-gray-900">You</div>
+                                                        )  : (
+                                                            <>
+                                                                <div className="text-base font-semibold text-gray-900">{sender.name}</div>
+                                                        
+                                                                <div className="text-sm font-normal text-gray-500">{sender.email}</div>
+                                                            </>
+                                                        )
+                                                    )}
                                                 </div>
                                             </td>
                                             <td className="p-4 items-center whitespace-nowrap space-x-6 mr-12 lg:mr-0">
@@ -109,10 +125,11 @@ const Transactions:React.FC<Props> = ({ transactions }) => {
                                                 }
                                                 </div>
                                             </td>
+                                            <td className="p-4 whitespace-nowrap text-base font-medium text-gray-900">{senderCurrency.shortHand}</td>
                                             <td className="p-4 whitespace-nowrap text-base font-medium text-gray-900">{receiverCurrency.shortHand}</td>
+                                            <td className="p-4 whitespace-nowrap text-base font-medium text-gray-900">{exchangeRate}</td>
                                             <td className="p-4 whitespace-nowrap text-base font-medium text-gray-900">{amount.toLocaleString()}</td>
                                             <td className="p-4 whitespace-nowrap text-base font-medium text-gray-900">{formatDate(createdAt, "MMM DD, YYYY hh:mm")}</td>
-                                            <td className="p-4 whitespace-nowrap text-base font-medium text-gray-900">{formatDate(updatedAt, "MMM DD, YYYY hh:mm")}</td>
                                         </tr>
                                     ))}
                                 </tbody>

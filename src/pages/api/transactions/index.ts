@@ -24,9 +24,11 @@ const fetchTransactions = async (req: any, res: any) => {
             id: true,
             transactionID: true,
             amount: true,
+            exchangeRate: true,
             sender: true, 
             receiver: true,
             receiverCurrency: true, 
+            senderCurrency: true, 
             createdAt: true,
             updatedAt: true
         }, 

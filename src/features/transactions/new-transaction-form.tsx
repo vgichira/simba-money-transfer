@@ -10,6 +10,7 @@ import { useSession } from 'next-auth/react';
 import { getExchangeRate } from '@data/use-currency';
 import { newTransaction } from '@data/use-transaction';
 import useCurrency from '@data/use-currency';
+import { getAccountBalance } from '@data/use-user';
 
 const initialValues = {
     user: '',
@@ -40,14 +41,25 @@ const NewTransactionForm = () => {
     const handleSubmit = async (
         values, { 
             // resetForm, 
-            // setErrors, 
+            setErrors, 
             // setStatus, 
             // setSubmitting 
         }) => {
             const currencyTo = currencies.find(currency => currency.id === Number(values.currency));
-            const currencyFrom = currencies.find(currency => currency.id === Number(user.accountCurrency))
+            const currencyFrom = currencies.find(currency => currency.id === Number(user.accountCurrency));
 
+            // Get the exchange rate of the source account to the destination account.
             const exchangeRate = await getExchangeRate(currencyFrom.shortHand, currencyTo.shortHand);
+
+            // Get the account balance.
+            const balance = await getAccountBalance();
+
+            if((exchangeRate * Number(values.amount)) > balance.account_balance) {
+                setErrors({
+                    submit: 'Insufficient balance. Please topup account and try again.'
+                })
+                return;
+            }
 
             const transaction = {
                 trans_id: `TRAN${+new Date()}`,
