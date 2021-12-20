@@ -46,12 +46,14 @@ const userActions = async (req, res) => {
                 }, 
                 select: {
                     exchangeRate: true, 
+                    sender: true, 
+                    receiver: true, 
                     amount: true
                 }
             })
 
             const debitTransactionsTotal = debitTransactions.reduce((acc, transaction) => {
-                return acc + (transaction.exchangeRate * transaction.amount);
+                return transaction.sender.id !== transaction.receiver.id && acc + (transaction.exchangeRate * transaction.amount);
             }, 0);
 
             const creditTransactions = await prisma.transaction.findMany({

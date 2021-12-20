@@ -6,6 +6,9 @@ import TextField from '@components/forms/text-field/text-field';
 import AccountCurrencySelect from '@components/auth/account-currency-select';
 import { signIn } from 'next-auth/react';
 import { registerUser } from '@data/use-user';
+import { newTransaction } from '@data/use-transaction';
+import { getExchangeRate } from '@data/use-currency';
+import useCurrency from '@data/use-currency';
 
 const initialValues = {
     name : '',
@@ -30,6 +33,15 @@ const SignupForm = () => {
             .min(4, "Password too short"),
     });
 
+    const { loading, error, data: currencies } = useCurrency();
+
+    if (loading) return null;
+
+    if (error) {
+        console.log(error);
+        return null;
+    }
+
     const newUser = async ( 
         values, 
         { 
@@ -52,6 +64,25 @@ const SignupForm = () => {
                 setErrors({submit: response.error});
                 return;
             }
+
+            const currencyTo = currencies.find(currency => currency.id === Number(values.currency));
+
+            const exchangeRate = await getExchangeRate('USD', currencyTo.shortHand);
+
+            // topup account with USD 2000
+            const trans = {
+                trans_id: `TRAN${+new Date()}`,
+                sender_currency: 2, 
+                receiver_currency: Number(response.accountCurrency), 
+                exchange_rate: Number(exchangeRate), 
+                amount: Number(2000), 
+                is_successful: true,
+                sender_id: Number(response.id), 
+                receiver_id: Number(response.id)
+            }
+
+            await newTransaction(trans);
+
 
             const loginUser = await signIn("credentials", {
                 email, password, callbackUrl: `${window.location.origin}/transactions`, redirect: false }
