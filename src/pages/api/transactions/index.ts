@@ -2,17 +2,21 @@ import prisma from '@lib/prisma';
 import { getSession } from 'next-auth/react';
 
 const fetchTransactions = async (req: any, res: any) => {
-    const { user } = await getSession({ req });
+    let user: any
+    const session = await getSession({ req });
+
+    // eslint-disable-next-line prefer-const
+    user = session.user
 
     const transactions = await prisma.transaction.findMany({
         where: {
             isSuccessful: true, 
             OR: [
                 {
-                    senderCurrencyID: user.id,
+                    senderID: user.id, 
                 }, 
                 {
-                    receiverCurrencyID: user.id,
+                    receiverID: user.id, 
                 }
             ]
         },
@@ -25,6 +29,9 @@ const fetchTransactions = async (req: any, res: any) => {
             receiverCurrency: true, 
             createdAt: true,
             updatedAt: true
+        }, 
+        orderBy: {
+            id: "desc"
         }
     })
 

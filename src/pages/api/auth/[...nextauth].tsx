@@ -38,7 +38,6 @@ const options = {
 						email: user.email,
 						isActive: user.isActive,
 						accountCurrency: user.accountCurrency,
-
 					}; 
 
 					return user;
@@ -66,7 +65,12 @@ const options = {
 				&& (typeof session.user === typeof undefined 
                 || (typeof session.user !== typeof undefined 
 					&& typeof session.user.userId === typeof undefined))) {
-                session.user = token.user;
+                session.user = {
+					id: token.user.id, 
+					name: token.user.name, 
+					email: token.user.email, 
+					accountCurrency: token.user.accountCurrency, 
+				}
             } else if (typeof token !== typeof undefined) {
                 session.token = token;
             }

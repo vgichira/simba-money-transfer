@@ -2,11 +2,15 @@ import prisma from '@lib/prisma';
 import { getSession } from "next-auth/react";
 
 const userActions = async (req, res) => {
+    let user: any
     const { action } = req.query;
     const { data } = req.body;
     let response: any
 
-    const { user } = await getSession({ req });
+    const session = await getSession({ req });
+
+    // eslint-disable-next-line prefer-const
+    user = session.user
 
     switch (action) {
         case "fetch":
