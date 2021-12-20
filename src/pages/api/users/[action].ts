@@ -1,4 +1,5 @@
 import prisma from '@lib/prisma';
+import { getSession } from "next-auth/react";
 
 const userActions = async (req, res) => {
     const { action } = req.query;
@@ -14,6 +15,23 @@ const userActions = async (req, res) => {
                     name: true, 
                     email: true, 
                     accountCurrency: true,
+                }
+            })
+            break;
+        case "all":
+            const { user } = await getSession({ req });
+
+            response = await prisma.user.findMany({
+                where: {
+                    isActive: true, 
+                    NOT: {
+                        email: user.email
+                    }
+                },
+                select: {
+                    id: true, 
+                    name: true, 
+                    email: true, 
                 }
             })
             break;
