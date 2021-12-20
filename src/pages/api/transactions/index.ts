@@ -1,9 +1,20 @@
 import prisma from '@lib/prisma';
+import { getSession } from 'next-auth/react';
 
-const fetchTransactions = async (req, res) => {
+const fetchTransactions = async (req: any, res: any) => {
+    const { user } = await getSession({ req });
+
     const transactions = await prisma.transaction.findMany({
         where: {
-            isSuccessful: true
+            isSuccessful: true, 
+            OR: [
+                {
+                    senderCurrencyID: user.id,
+                }, 
+                {
+                    receiverCurrencyID: user.id,
+                }
+            ]
         },
         select: {
             id: true,
