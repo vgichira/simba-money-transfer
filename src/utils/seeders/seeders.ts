@@ -5,11 +5,13 @@ import * as bcrypt from 'bcrypt';
 const prisma = new PrismaClient();
 
 async function main() {
+    // Seed Currencies
     await prisma.currency.createMany({
         data: currencies, 
         skipDuplicates: true 
     })
 
+    // Seed users
     await prisma.user.createMany({
         data: [
             {
@@ -24,10 +26,36 @@ async function main() {
                 email: 'jane.doe@gmail.com',
                 password: await bcrypt.hash('Test1234', 10),
                 isActive: true, 
-                accountCurrency: 2
+                accountCurrency: 1
             }
         ], 
         skipDuplicates: true 
+    })
+
+    // Seed Transactions
+    await prisma.transaction.createMany({
+        data: [
+            {
+                transactionID: `TRAN${+new Date()}`,
+                senderCurrencyID: 2, 
+                receiverCurrencyID: 1, 
+                exchangeRate: 113.27, 
+                amount: 2000, 
+                isSuccessful: true,
+                senderID: 1, 
+                receiverID: 1
+            }, 
+            {
+                transactionID: `TRAN${+new Date()}`,
+                senderCurrencyID: 2, 
+                receiverCurrencyID: 1, 
+                exchangeRate: 113.27, 
+                amount: 2000, 
+                isSuccessful: true,
+                senderID: 2, 
+                receiverID: 2
+            }
+        ]
     })
 }
   
