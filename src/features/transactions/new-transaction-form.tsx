@@ -49,7 +49,7 @@ const NewTransactionForm = () => {
             const currencyFrom = currencies.find(currency => currency.id === Number(user.accountCurrency));
 
             // Get the exchange rate of the source account to the destination account.
-            const exchangeRate = await getExchangeRate(currencyFrom.shortHand, currencyTo.shortHand);
+            const exchangeRate = await getExchangeRate(currencyTo.shortHand, currencyFrom.shortHand);
 
             // Get the account balance.
             const balance = await getAccountBalance();
@@ -81,7 +81,7 @@ const NewTransactionForm = () => {
 
                 notify();
                 
-                Router.push('/transactions')
+                Router.push('/')
             }
 
         }
@@ -155,7 +155,7 @@ const NewTransactionForm = () => {
                             style={{backgroundColor: 'rgba(8,145,178,var(--tw-bg-opacity))'}} 
                             className="px-4 py-1 text-white font-light tracking-wider px-10
                             py-3.5 rounded-lg" type="submit">
-                            {isSubmitting ? "Loading..." : "Send to Vincent Muchiri"}
+                            {isSubmitting ? "Loading..." : "Send Money"}
                             </button>
                         </div>
                     </form>
