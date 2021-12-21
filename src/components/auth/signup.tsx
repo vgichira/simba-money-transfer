@@ -85,7 +85,7 @@ const SignupForm = () => {
 
 
             const loginUser = await signIn("credentials", {
-                email, password, callbackUrl: `${window.location.origin}/transactions`, redirect: false }
+                email, password, callbackUrl: `${window.location.origin}`, redirect: false }
             );
 
             if(loginUser.error) {
