@@ -8,7 +8,7 @@ type SeoProps = {
 const SEO: React.FC<SeoProps> = ({ title, description}) => {
     return (
         <Head>
-        <title>{title}</title>
+        <title>{`Simba Transfer :: ${title}`}</title>
         <meta name="description" content={description} />
         <meta
         name="viewport"

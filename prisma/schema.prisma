@@ -1,0 +1,64 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              Int       @id @default(autoincrement())
+  name            String    @db.VarChar(255)
+  email           String    @unique @db.VarChar(255)
+  accountCurrency Int?      @map("currency_id")
+  verifiedAt      DateTime? @map(name: "verified_at")
+  isActive        Boolean   @default(false) @map(name: "is_active")
+  password        String    @db.VarChar(255)
+  createdAt       DateTime  @default(now()) @map(name: "created_at")
+  updatedAt       DateTime  @default(now()) @map(name: "updated_at")
+
+  currency     Currency?     @relation(fields: [accountCurrency], references: [id])
+  transactions Transaction[] @relation("sender")
+  transaction  Transaction[] @relation("receiver")
+
+  @@map(name: "users")
+}
+
+model Currency {
+  id           Int       @id @default(autoincrement())
+  currencyName String    @map("currency_name") @db.VarChar(50)
+  shortHand    String    @map("short_hand") @db.VarChar(10)
+  isActive     Boolean   @default(true) @map("is_active")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @default(now()) @map("updated_at")
+  deletedAt    DateTime? @map("deleted_at")
+
+  user         User[]
+  transaction  Transaction[] @relation("senderCurrency")
+  transactions Transaction[] @relation("receiverCurrency")
+  @@map("currencies")
+}
+
+model Transaction {
+  id                 Int      @id @default(autoincrement())
+  transactionID      String   @map("transaction_id") @db.VarChar(30)
+  senderCurrencyID   Int      @map("sender_currency_id")
+  receiverCurrencyID Int      @map("receiver_currency_id")
+  senderCurrency     Currency @relation("senderCurrency", fields: [senderCurrencyID], references: [id])
+  receiverCurrency   Currency @relation("receiverCurrency", fields: [receiverCurrencyID], references: [id])
+  exchangeRate       Float    @map("exchange_rate")
+  amount             Float
+  isSuccessful       Boolean  @map("is_successful")
+  senderID           Int      @map("sender_id")
+  receiverID         Int      @map("receiver_id")
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @default(now()) @map("updated_at")
+
+  sender   User @relation("sender", fields: [senderID], references: [id])
+  receiver User @relation("receiver", fields: [receiverID], references: [id])
+  @@map("transactions")
+}
